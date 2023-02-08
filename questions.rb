@@ -21,7 +21,18 @@ class Questions
     @users_id = options['users_id']
   end
 
-  def self.find_by_id
+  def self.find_by_id(id)
+    id = QuestionsDatabase.instance.execute(<<-SQL, id)
+    SELECT
+      *
+    FROM
+      questions
+    WHERE 
+      id = ?
+    SQL
+    return nil unless id.length > 0
+    Questions.new(id.first)
+  end
 end
 
 class Users
@@ -32,6 +43,32 @@ class Users
     @fname = options['fname']
     @lname = options['lname']
   end
+
+  def self.find_by_id(id)
+    id = QuestionsDatabase.instance.execute(<<-SQL, id)
+    SELECT
+      *
+    FROM
+      users
+    WHERE 
+      id = ?
+    SQL
+    return nil unless id.length > 0
+    Users.new(id.first)
+  end
+
+  def self.find_by_name(fname, lname)
+    name = QuestionsDatabase.instance.execute(<<-SQL, fname, lname)
+    SELECT
+      *
+    FROM
+      users
+    WHERE 
+      fname = ? AND lname = ?
+    SQL
+    return nil unless name.length > 0
+    Users.new(name.first)
+  end
 end
 
 class Questions_Follows
@@ -41,6 +78,19 @@ class Questions_Follows
     @id = options['id']
     @questions_id = options['questions_id']
     @users_id = options['users_id']
+  end
+
+  def self.find_by_id(id)
+    id = QuestionsDatabase.instance.execute(<<-SQL, id)
+    SELECT
+      *
+    FROM
+      questions_follows
+    WHERE 
+      id = ?
+    SQL
+    return nil unless id.length > 0
+    Questions_Follows.new(id.first)
   end
 end
 
@@ -56,6 +106,19 @@ class Replies
     @questions_id = options['questions_id']
     @users_id = options['users_id']
   end
+
+  def self.find_by_id(id)
+    id = QuestionsDatabase.instance.execute(<<-SQL, id)
+    SELECT
+      *
+    FROM
+      replies
+    WHERE 
+      id = ?
+    SQL
+    return nil unless id.length > 0
+    Replies.new(id.first)
+  end
 end
 
 class Questions_Likes
@@ -65,6 +128,19 @@ class Questions_Likes
     @questions_id = options['questions_id']
     @likes = options['likes']
     @users_id = options['users_id']
+  end
+
+  def self.find_by_id(id)
+    id = QuestionsDatabase.instance.execute(<<-SQL, id)
+    SELECT
+      *
+    FROM
+      questions_likes
+    WHERE 
+      id = ?
+    SQL
+    return nil unless id.length > 0
+    Questions_Likes.new(id.first)
   end
 end
 

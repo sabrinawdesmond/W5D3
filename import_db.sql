@@ -1,4 +1,8 @@
-PRAGMA foreign_keys = ON
+PRAGMA foreign_keys = ON;
+DROP TABLE IF EXISTS questions_likes;
+DROP TABLE IF EXISTS replies;
+DROP TABLE IF EXISTS question_follows;
+DROP TABLE IF EXISTS questions;
 DROP TABLE IF EXISTS users;
 
 CREATE TABLE users (
@@ -6,7 +10,7 @@ CREATE TABLE users (
     fname TEXT NOT NULL,
     lname TEXT NOT NULL
 );
-DROP TABLE IF EXISTS questions;
+
 
 CREATE TABLE questions(
     id INTEGER PRIMARY KEY,
@@ -16,7 +20,7 @@ CREATE TABLE questions(
     FOREIGN KEY (users_id) REFERENCES users(id)
 );
 
-DROP TABLE IF EXISTS question_follows;
+
 
 CREATE TABLE question_follows(
     id INTEGER PRIMARY KEY,
@@ -26,7 +30,7 @@ CREATE TABLE question_follows(
     FOREIGN KEY (users_id) REFERENCES users(id)
 );
 
-DROP TABLE IF EXISTS replies;
+
 
 CREATE TABLE replies(
     id INTEGER PRIMARY KEY,
@@ -36,12 +40,11 @@ CREATE TABLE replies(
     questions_title TEXT NOT NULL,
     questions_id INTEGER NOT NULL,
     users_id INTEGER NOT NULL,
-    FOREIGN KEY (questions_title) REFERENCES questions(title),
     FOREIGN KEY (questions_id) REFERENCES questions(id),
     FOREIGN KEY (users_id) REFERENCES users(id)
 );
 
-DROP TABLE IF EXISTS questions_likes;
+
 
 CREATE TABLE questions_likes(
     likes INTEGER,
@@ -60,6 +63,6 @@ VALUES
 INSERT INTO
     questions(title, body, users_id)
 VALUES
-    ('Why AA?', 'adfadfaefkj', SELECT id FROM users WHERE fname = 'John' AND lname = 'Smith'),
-    ('Why todya?', 'adfafdafdaf', SELECT id FROM useres WHERE fname = 'Jane' AND lname = 'Doe');
+    ('Why AA?', 'adfadfaefkj', 1),
+    ('Why todya?', 'adfafdafdaf', 2);
 

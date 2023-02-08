@@ -33,6 +33,17 @@ class Questions
     return nil unless id.length > 0
     Questions.new(id.first)
   end
+
+  def create
+    raise '#{self} already in database' if @id 
+    QuestionsDatabase.instance.execute(<<-SQL, @title, @body, @users_id)
+    INSERT INTO 
+      questions(title, body, users_id)
+    VALUES
+      (?, ?, ?)
+    SQL
+    @id = QuestionsDatabase.instance.last_insert_row_id
+  end
 end
 
 class Users
@@ -68,6 +79,17 @@ class Users
     SQL
     return nil unless name.length > 0
     Users.new(name.first)
+  end
+
+  def create
+    raise '#{self} already in database' if @id 
+    QuestionsDatabase.instance.execute(<<-SQL, @fname, @lname)
+    INSERT INTO 
+      users(fname, lname)
+    VALUES
+      (?, ?)
+    SQL
+    @id = QuestionsDatabase.instance.last_insert_row_id
   end
 end
 
@@ -119,6 +141,18 @@ class Replies
     return nil unless id.length > 0
     Replies.new(id.first)
   end
+
+  def create
+    raise '#{self} already in database' if @id 
+    QuestionsDatabase.instance.execute(<<-SQL, @parent_reply_id, @title, @body, @questions_title, @questions_id, @users_id)
+    INSERT INTO 
+      replies(parent_reply_id, title, body, questions_title, questions_id, users_id)
+    VALUES
+      (?, ?, ?, ?, ?, ?)
+    SQL
+    @id = QuestionsDatabase.instance.last_insert_row_id
+  end
+
 end
 
 class Questions_Likes

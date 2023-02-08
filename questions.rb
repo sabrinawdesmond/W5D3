@@ -57,7 +57,14 @@ class Questions
     return nil unless users_id.length > 0 
     users_id.map { |q| Questions.new(q) }
   end
-
+  
+  def author
+    Users.find_by_id(self.users_id)
+  end
+  
+  def authored_replies
+    Replies.find_by_users_id(self.id)
+ end
   # def author(questions_id)
   #   SELECT
   #     fname, lname
@@ -100,30 +107,22 @@ class Users
     Users.new(name.first)
   end
 
-  def authored_questions(user_id)
-    user_id = QuestionsDatabase.instance.execute(<<-SQL, id)
-    SELECT
-      *
-    FROM
-      questions
-    WHERE
-      id = ?
-    SQL
-    return nil unless user_id.length > 0
-    users_id.map { |u| Questions.new(u) }
+  def authored_questions
+    Questions.find_by_users_id(self.id)
+    # user_id = QuestionsDatabase.instance.execute(<<-SQL, id)
+    # SELECT
+    #   *
+    # FROM
+    #   questions
+    # WHERE
+    #   id = ?
+    # SQL
+    # return nil unless user_id.length > 0
+    # users_id.map { |u| Questions.new(u) }
   end
 
-  def authored_replies(users_id)
-    user_id = QuestionsDatabase.instance.execute(<<-SQL, Replies.find_by_users_id(users_id))
-    SELECT
-      *
-    FROM
-      replies
-    WHERE
-      users_id = ?
-    SQL
-    return nil unless users_id.length > 0
-    users_id.map { |u| Replies.new(u) }
+  def authored_replies
+     Replies.find_by_users_id(self.id)
   end
 
   def create

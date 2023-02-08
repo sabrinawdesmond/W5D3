@@ -44,6 +44,19 @@ class Questions
     SQL
     @id = QuestionsDatabase.instance.last_insert_row_id
   end
+
+  def self.find_by_users_id(users_id)
+    users_id = QuestionsDatabase.instance.execute(<<-SQL, users_id)
+    SELECT
+      *
+    FROM
+      questions
+    WHERE
+      users_id = ?
+    SQL
+    return nil unless users_id.length > 0 
+    users_id.map { |q| Questions.new(q) }
+  end
 end
 
 class Users
@@ -79,6 +92,32 @@ class Users
     SQL
     return nil unless name.length > 0
     Users.new(name.first)
+  end
+
+  def authored_questions(Questions.find_by_users_id(users_id))
+    user_id = QuestionsDatabase.instance.execute(<<-SQL, Questions.find_by_users_id(users_id))
+    SELECT
+      *
+    FROM
+      questions
+    WHERE
+      users_id = ?
+    SQL
+    return nil unless users_id.length > 0
+    users_id.map { |u| Questions.new(u) }
+  end
+
+  def authored_replies(Replies.find_by_users_id(users_id))
+    user_id = QuestionsDatabase.instance.execute(<<-SQL, Replies.find_by_users_id(users_id))
+    SELECT
+      *
+    FROM
+      replies
+    WHERE
+      users_id = ?
+    SQL
+    return nil unless users_id.length > 0
+    users_id.map { |u| Replies.new(u) }
   end
 
   def create
@@ -142,6 +181,19 @@ class Replies
     Replies.new(id.first)
   end
 
+  def self.find_by_questions_id(questions_id)
+    id = QuestionsDatabase.instance.execute(<<-SQL, questions_id)
+    SELECT
+      *
+    FROM
+      replies
+    WHERE 
+      questions_id = ?
+    SQL
+    return nil unless questions_id > 0
+    Replies.new(questions_id.first)
+  end
+
   def create
     raise '#{self} already in database' if @id 
     QuestionsDatabase.instance.execute(<<-SQL, @parent_reply_id, @title, @body, @questions_title, @questions_id, @users_id)
@@ -151,6 +203,19 @@ class Replies
       (?, ?, ?, ?, ?, ?)
     SQL
     @id = QuestionsDatabase.instance.last_insert_row_id
+  end
+
+  def self.find_by_users_id(users_id)
+    users_id = QuestionsDatabase.instance.execute(<<-SQL, users_id)
+     SELECT
+      *
+    FROM
+      replies
+    WHERE
+      users_id = ?
+    SQL
+    return nil unless users_id.length > 0
+    users_id.map { |r| Replies.new(r) }
   end
 
 end
